@@ -1,77 +1,119 @@
-'use client'
-
+'use client';
+import { client } from "@/lib/client";
 import { useMutation } from "@tanstack/react-query";
-import { timeStamp } from "console";
 import { nanoid } from "nanoid";
-import { useEffect, useState } from "react";
-import { client }from "../lib/client"
 import { useRouter } from "next/navigation";
+import { useState ,useEffect} from "react";
 
-const NAMES =["Mike Wheeler" ,"Dustin Henderson" ,"Lucas Sinclair" ,"Will Byers" ,"Eleven" ,"Steve Harrington","Nancy", "Jonathon Byers" ,"Jim Hopper","Murray Bauman", "Walter White" ,"Jesse Pinkman" ,"Skyler White","Hank Schrader" ,"Marie Schrader" ,"Tuco Salamanca" ,"Gus Fring" ,"Billy Butcher" ,"Hugie Campbell" ,"MM","Frenchie" ,"Kimiko" ,"Homelander" ,"Maeve" ,"Starlight","A-Train","The Deep" ,"Black Noir" ,"Translucent" ,"Soldier Boy"]
+const SUPES = [
+  "Billy Butcher",
+  "Hughie Campbell",
+  "Homelander",
+  "Starlight",
+  "A-Train",
+  "Mother's Milk",
+  "Frenchie",
+  "Kimiko Miyashiro",
+  "The Deep",
+  "Black Noir",
+  "Queen Maeve",
+  "Ashley Barrett",
+  "Victoria Neuman",
+  "Ryan Butcher",
+  "Soldier Boy",
+  "Stormfront",
+  "Sister Sage",
+  "Firecracker",
+  "Stan Edgar",
+  "Grace Mallory",
+  "Becca Butcher",
+  "Madelyn Stillwell",
+  "Joe Kessler",
+  "Translucent",
+  "Lamplighter",
+  "Supersonic",
+  "Crimson Countess",
+  "Gunpowder",
+  "Blue Hawk",
+  "Eagle the Archer",
+  "Shockwave",
+  "Popclaw",
+  "Kenji Miyashiro",
+  "Robin Ward",
+  "Hugh Campbell Sr.",
+  "Monique Milk",
+  "Janine Milk",
+  "Cherie",
+  "Little Nina",
+  "Robert Singer"
+];
 
-const STORAGE_KEY = "chat_username"
+const STORAGE_KEY = "chat_username";
 
 const generateUsername = () =>{
-  const word = NAMES[Math.floor(Math.random() * NAMES.length)]
-  return `${word} - ${nanoid(5)}`
+    const word = SUPES[Math.floor(Math.random() * SUPES.length)]
+    return `Anonymous-${word}-${nanoid(5)}`
 }
 
 
+
+
 export default function Home() {
- 
-  const [username, setUsername] = useState(" ");
+   const [username, setUsername] = useState("");
+   const router = useRouter()
 
-  const router = useRouter()
+   useEffect(() =>{
+    const main = () =>{
+     const stored = localStorage.getItem(STORAGE_KEY)
 
-   useEffect(()=>{
-    const main =( ) =>{
-      const stored = localStorage.getItem(STORAGE_KEY)
-
-      if(stored) {
-        setUsername(stored)
-        return
-      }
-
-      const generated = generateUsername()
-      localStorage.setItem(STORAGE_KEY,generated)
-      setUsername(generated)
+     if(stored) {
+      setUsername(stored)
+      return
+     }
+     const generated = generateUsername()
+     localStorage.setItem(STORAGE_KEY,generated)
+     setUsername(generated)
     }
     main()
    },[])
 
-   const { mutate:createRoom  } = useMutation({
-     mutationFn:async () =>{
-        const res = await client.room.create.post()
-        if(res.status === 200 ){
-          router.push(`/room/${res.data?.roomId}`)
-     }
-     }
-     
-   })
 
+    const {mutate : createRoom} = useMutation({
+      mutationFn:async () =>{
+        const res = await client.room.create.post()
+
+        if(res.status === 200){
+          router.push(`/room/${res.data?.roomId}`)
+        }
+      },
+    })
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4">
-        <div className="w-full max-w-md  space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight text-green-500">{">"} Private Chat</h1>
-          <p className="text-zinc-500 text-sm">A private,self-destructing chat room.</p>
+  <main className="flex min-h-screen flex-col items-center justify-center p-4">
+    <div className="w-full max-w-md space-y-8">
+        
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight text-green-500">{">"} Private Chat</h1>
+        <p className="text-zinc-500 text-sm">A private self-destructing chat room. </p>
+      </div>
+
+
+     <div className="border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur-md">
+      <div className="space-y-5">
+     <div className="space-y-2">
+      <label className="flex items-center text-shadow-zinc-500">Your Identity</label> 
+      <div className="flex items-center gap-3">
+        <div className="flex-1 bg-zinc-950 border border-zinc-800 p-3 text-sm text-zinc-400 font-mono">
+          {username}
         </div>
-          <div className="border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur-md">
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <label  className="flex items-center text-zinc-500">Your Identity</label>
-              <div className="flex items-center gap-3">
-                <div className="flex-1 bg-zinc-950 border border-zinc-800 p-3 text-sm text-zinc-400 font-mono">{username}</div>
-              </div>
-            </div>
-          <button onClick={() => createRoom()} className="w-full bg-zinc-100 text-black p-3 text-sm font-bold hover:bg-zinc-50 hover:text-black transition-colors mt-2 cursor-pointer disabled:opacity-50"> Create Secure Room </button>
-          </div>
-          
-          </div>
-        </div>
-    </main>
-  );
+      </div>
+     </div>
+        <button onClick={() => createRoom()} className="w-full bg-zinc-100 text-black p-3 text-sm font-bold hover:bg-zinc-50 hover:text-black transition-colors mt-2 cursor-pointer disabled:opacity-50">
+          CREATE SECURE ROOM
+        </button>
+      </div>
+     </div>
+    </div>
+  </main>
+  )
 }
-
-

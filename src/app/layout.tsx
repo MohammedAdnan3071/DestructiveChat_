@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import {JetBrains_Mono} from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets:['latin'],
-  variable:"--font-jetbrains-mono"
+  variable:"--font-jetbrains-mono",
+  subsets:["latin"],
 })
-
 
 
 export const metadata: Metadata = {
@@ -21,12 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${jetbrainsMono.variable} antialiased`}
-      >
-      <Providers>  {children} </Providers>
-      </body>
+    <html
+      lang="en"
+      className={`${jetbrainsMono.variable} ${jetbrainsMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+        </body>
     </html>
   );
 }
