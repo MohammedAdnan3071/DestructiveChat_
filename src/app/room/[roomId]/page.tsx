@@ -30,7 +30,7 @@ const Page = () => {
   const { data: ttlData } = useQuery({
     queryKey: ["ttl", roomId],
     queryFn: async () => {
-      const res = await client.room.ttl.get({ query: { roomId } })
+      const res = await client.api.room.ttl.get({ query: { roomId } })
       return res.data
     },
   })
@@ -63,14 +63,14 @@ const Page = () => {
   const { data: messages, refetch } = useQuery({
     queryKey: ["messages", roomId],
     queryFn: async () => {
-      const res = await client.messages.get({ query: { roomId } })
+      const res = await client.api.messages.get({ query: { roomId } })
       return res.data
     },
   })
 
   const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async ({ text }: { text: string }) => {
-      await client.messages.post({ sender: username, text }, { query: { roomId } })
+      await client.api.messages.post({ sender: username, text }, { query: { roomId } })
 
       setInput("")
     },
@@ -92,7 +92,7 @@ const Page = () => {
 
   const { mutate: destroyRoom } = useMutation({
     mutationFn: async () => {
-      await client.room.delete(null, { query: { roomId } })
+      await client.api.room.delete(null, { query: { roomId } })
     },
   })
 
